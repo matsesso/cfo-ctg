@@ -1,12 +1,6 @@
 <?php
-   define('DB_SERVER', '179.188.38.197');
-   define('DB_USERNAME', 'guido');
-   define('DB_PASSWORD', 'Xqr6w7J7NMRWdBC9');
-   define('DB_DATABASE', 'website_estatistico');
-   $db = mysqli_connect(DB_SERVER,DB_USERNAME,DB_PASSWORD,DB_DATABASE);
-?>
+include('connection.php');
 
-<?php
 if(count($_POST) > 0) {
     $dados = $_POST;
     $erros = [];
@@ -59,22 +53,22 @@ if(count($_POST) > 0) {
         echo "<script>alert('Insira um CPF ou CNPJ válido.');</script>";
     }
 
-    $cpfcnpj = mysqli_real_escape_string($db, $_POST['cpfcnpj']);
+    $cpfcnpj = mysqli_real_escape_string($connection, $dados['cpfcnpj']);
 
-    $sql2 = "SELECT * FROM pfpj WHERE cpf_cnpj = '$cpfcnpj' AND sit_financeira != 'OK'";
-    $stmt = $db->prepare($sql2);
+    $sql2 = "SELECT * FROM pfpj WHERE cpf_cnpj = '$cpfcnpj' AND situacao != 'Ativo'";
+    $stmt = $connection->prepare($sql2);
     $stmt->execute();
     $stmt->store_result();
 
-    if($stmt->num_rows > 0) {
-        $erros["cpfcnpj2"] =  "Este CPF ou CNPJ consta débitos. Procure o CFO para mais informações.";
-        echo "<script>alert('Este CPF ou CNPJ consta débitos. Procure o CFO para mais informações.');</script>";
+    if(validaCPF($dados['cpfcnpj']) && validaCNPJ($dados['cpfcnpj']) && $stmt->num_rows > 0) {
+        $erros["cpfcnpj2"] =  "Este CPF ou CNPJ encontra-se inativo. Favor procurar o seu CRO para atualização de dados.";
+        echo "<script>alert('Este CPF ou CNPJ encontra-se inativo. Favor procurar o seu CRO para atualização de dados.');</script>";
     }
     
     if(!count($erros)) {
       
       $sql = "SELECT * FROM pfpj WHERE cpf_cnpj = '$cpfcnpj'";
-      $stmt = $db->prepare($sql);
+      $stmt = $connection->prepare($sql);
       $stmt->execute();
       $stmt->store_result();
       
@@ -88,6 +82,10 @@ if(count($_POST) > 0) {
 }
 ?>
 
+<!-- 
+    Landing Page CFO e BTG+ - Conselho Federal de Odontologia
+    Feito por Matheus Sesso
+-->
 <!doctype html>
 <html lang="pt-bt">
     <head>
@@ -102,81 +100,61 @@ if(count($_POST) > 0) {
 
         <!-- CSS FILES -->        
         <link rel="preconnect" href="https://fonts.googleapis.com">
-        
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
 
         <link href="css/bootstrap.min.css" rel="stylesheet">
-
         <link href="css/bootstrap-icons.css" rel="stylesheet">
-
         <link href="css/owl.carousel.min.css" rel="stylesheet">
-
         <link href="css/owl.theme.default.min.css" rel="stylesheet">
-
         <link href="css/templatemo-medic-care.css" rel="stylesheet">
 
         <script type="text/javascript">
-function mascaraMutuario(o,f){
-    v_obj=o
-    v_fun=f
-    setTimeout('execmascara()',1)
-}
+        function MascaraCpfCnpj(campo,teclapres) {
+            var tecla = teclapres.keyCode;
 
-function execmascara(){
-    v_obj.value=v_fun(v_obj.value)
-}
+            if ((tecla < 48 || tecla > 57) && (tecla < 96 || tecla > 105) && tecla != 46 && tecla != 8 && tecla != 9) {
+                return false;
+            }
 
-function cpfCnpj(v){
+            var vr = campo.value;
+            vr = vr.replace( /\//g, "" );
+            vr = vr.replace( /-/g, "" );
+            vr = vr.replace( /\./g, "" );
+            var tam = vr.length;
 
-    //Remove tudo o que não é dígito
-    v=v.replace(/\D/g,"")
-
-    if (v.length <= 14) { //CPF
-
-        //Coloca um ponto entre o terceiro e o quarto dígitos
-        v=v.replace(/(\d{3})(\d)/,"$1.$2")
-
-        //Coloca um ponto entre o terceiro e o quarto dígitos
-        //de novo (para o segundo bloco de números)
-        v=v.replace(/(\d{3})(\d)/,"$1.$2")
-
-        //Coloca um hífen entre o terceiro e o quarto dígitos
-        v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2")
-
-    } else { //CNPJ
-
-        //Coloca ponto entre o segundo e o terceiro dígitos
-        v=v.replace(/^(\d{2})(\d)/,"$1.$2")
-
-        //Coloca ponto entre o quinto e o sexto dígitos
-        v=v.replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3")
-
-        //Coloca uma barra entre o oitavo e o nono dígitos
-        v=v.replace(/\.(\d{3})(\d)/,".$1/$2")
-
-        //Coloca um hífen depois do bloco de quatro dígitos
-        v=v.replace(/(\d{4})(\d)/,"$1-$2")
-
-    }
-
-    return v
-}
+            if ( tam <= 2 ) {
+                campo.value = vr;
+            }
+            if ( (tam > 2) && (tam <= 5) ) {
+                campo.value = vr.substr( 0, tam - 2 ) + '-' + vr.substr( tam - 2, tam );
+            }
+            if ( (tam >= 6) && (tam <= 8) ) {
+                campo.value = vr.substr( 0, tam - 5 ) + '.' + vr.substr( tam - 5, 3 ) + '-' + vr.substr( tam - 2, tam );
+            }
+            if ( (tam >= 9) && (tam <= 11) ) {
+                campo.value = vr.substr( 0, tam - 8 ) + '.' + vr.substr( tam - 8, 3 ) + '.' + vr.substr( tam - 5, 3 ) + '-' + vr.substr( tam - 2, tam );
+            }
+            if ( (tam == 12) ) {
+                campo.value = vr.substr( tam - 12, 3 ) + '.' + vr.substr( tam - 9, 3 ) + '/' + vr.substr( tam - 6, 4 ) + '-' + vr.substr( tam - 2, tam );
+            }
+            if ( (tam > 12) && (tam <= 14) ) {
+                campo.value = vr.substr( 0, tam - 12 ) + '.' + vr.substr( tam - 12, 3 ) + '.' + vr.substr( tam - 9, 3 ) + '/' + vr.substr( tam - 6, 4 ) + '-' + vr.substr( tam - 2, tam );
+            }
+            if (tam > 13){     
+                if (tecla != 8){
+                    return false
+                }
+            }
+        }
         </script>
-
     </head>
     
     <body id="top">
-    
         <main>
-
             <nav class="navbar navbar-expand-lg">
                 <div class="container">
-                    <a class="navbar-brand mx-auto d-lg-none" href="index.php">
+                    <a class="navbar-brand mx-auto d-xl-none" href="index.php">
                         <img src="images/logo.png"/>
                     </a>
 
@@ -189,21 +167,17 @@ function cpfCnpj(v){
                             <li class="nav-item active">
                                 <a class="nav-link" href="#hero">Início</a>
                             </li>
-
                             <li class="nav-item">
                                 <a class="nav-link" href="#about">Sobre</a>
                             </li>
-
                             <a class="navbar-brand d-none d-sm-block" href="index.php"> 
                                 <a href="index.php" class="text-black">
                                     <img class="d-none d-sm-block" src="images/logo.png"/>
                                 </a>
                             </a>
-
                             <li class="nav-item">
                                 <a class="nav-link" href="#infos">Seus benefícios</a>
                             </li>
-
                             <li class="nav-item">
                                 <a class="nav-link nav-link btn btn-plus" target="_blank" href="https://www.sejabtg.com/">Seja BTG+</a>
                             </li>
@@ -216,21 +190,15 @@ function cpfCnpj(v){
             <section class="hero" id="hero">
                 <div class="container">
                     <div class="row">
-
                         <div class="col-12">
-
                             <div class="heroText d-flex flex-column justify-content-center">
-
-                                <h4 class="mt-auto mb-2">
+                                <h4 style="font-weight: bold; color: #73141d" class="mt-auto mb-2">
                                     Parceria BTG Pactual e<br>
                                     Conselho Federal de Odontologia
                                 </h4>
-
-                                <p>O BTG e o CFO se uniram para trazer os melhores benefícios para você e para o seu negócio.</p>
-
+                                <p style="font-size: 1.3rem; font-weight: 500;">O BTG e o CFO se uniram para trazer os melhores benefícios para você e para o seu negócio.</p>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </section>
@@ -251,7 +219,7 @@ function cpfCnpj(v){
                         <div class="col-lg-4 col-md-4 col-12 mx-auto">
                             <form action="#" method="POST" onsubmit="return checkForm()">
                                 <div class="form-row">
-                                    <input type="text" id="cpfcnpj" name="cpfcnpj" onkeypress='mascaraMutuario(this,cpfCnpj)' onblur='clearTimeout()' minlength="14" maxlength="18" class="form-setup" placeholder="Digite o número do CPF ou CNPJ">
+                                    <input type="text" id="cpfcnpj" name="cpfcnpj" onkeydown="return MascaraCpfCnpj(this,event)" onkeyup="return MascaraCpfCnpj(this,event)" minlength="14" maxlength="18" class="form-setup" placeholder="Digite o número do CPF ou CNPJ">
                                     <div class="invalid-feedback">
                                         <?= $erros["cpfcnpj"]; $erros["cpfcnpj2"]; ?>
                                     </div>
@@ -265,7 +233,6 @@ function cpfCnpj(v){
             </section>
 
             <section class="infos" id="infos">
-
                 <div class="container">
                     <div class="row">
 
@@ -303,24 +270,17 @@ function cpfCnpj(v){
 
                     </div>
                 </div>
-
-
-
             </section>
 
             <section class="gallery">
                 <div class="container">
                     <div class="row">
-
                         <div class="col-12">
-
                             <p style="text-align: justify; font-size: 11px; font-weight: 500;"><i><b>Aviso legal:</b> O Conselho Federal de Odontologia não obterá lucro ou qualquer tipo de vantagem decorrente da eventual adesão do inscrito ao pacote de benefícios ofertado pelo BTG, o qual
                                 foi disponibilizado sem qualquer ônus ao CFO. A validação do acesso nesta página apenas direcionará o interessado a uma página do BTG, em que se terá acesso às informações referentes
                                 aos benefícios. O fornecimento de dados pessoais ao BTG será de responsabilidade do inscrito interessado. Não haverá compartilhamento de dados pessoais de inscritos por parte do CFO.</i>
                             </p>
-
                         </div> 
-
                     </div>
                 </div>
             </section>
@@ -330,29 +290,18 @@ function cpfCnpj(v){
         <footer class="site-footer" id="contact">
             <div class="container">
                 <div class="row">
-
                     <div class="col-12" align="center">
-
                         <img src="images/footer-img.png"/>
-
                     </div> 
-
                 </div>
             </div>
         </footer>
 
-        <!-- JAVASCRIPT FILES -->
+        <!-- JS Files -->
         <script src="js/jquery.min.js"></script>
         <script src="js/bootstrap.bundle.min.js"></script>
         <script src="js/owl.carousel.min.js"></script>
         <script src="js/scrollspy.min.js"></script>
         <script src="js/custom.js"></script>
-<!--
-
-TemplateMo 566 Medic Care
-
-https://templatemo.com/tm-566-medic-care
-
--->
     </body>
 </html>
