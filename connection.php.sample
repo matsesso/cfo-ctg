@@ -1,0 +1,10 @@
+<?php
+    define('DB_SERVER', 'localhost');
+    define('DB_USERNAME', 'user');
+    define('DB_PASSWORD', 'pass');
+    define('DB_DATABASE', 'db');
+    $connection = mysqli_connect(DB_SERVER,DB_USERNAME,DB_PASSWORD,DB_DATABASE);
+    if($connection->connect_error) {
+        die('Error: ' . $connection->connect_error);
+    }
+?>
