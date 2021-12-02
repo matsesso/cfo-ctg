@@ -86,18 +86,18 @@ include('webservice.php');
                                 <a class="nav-link" href="#hero">Início</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#about">Sobre</a>
+                                <a class="nav-link" href="#sobre">Sobre</a>
                             </li>
-                            <a class="navbar-brand d-none d-sm-block" href="index.php"> 
+                            <a class="navbar-brand d-none d-xl-block" href="index.php"> 
                                 <a href="index.php" class="text-black">
-                                    <img class="d-none d-sm-block" src="images/logo.png"/>
+                                    <img class="d-none d-xl-block" src="images/logo.png"/>
                                 </a>
                             </a>
                             <li class="nav-item">
                                 <a class="nav-link" href="#infos">Seus benefícios</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link nav-link btn btn-plus" target="_blank" href="https://www.sejabtg.com/">Seja BTG+</a>
+                                <a class="nav-link nav-link btn btn-plus" href="#btg">Seja BTG+</a>
                             </li>
                         </ul>
                     </div>
@@ -110,27 +110,28 @@ include('webservice.php');
                     <div class="row">
                         <div class="col-12">
                             <div class="heroText d-flex flex-column justify-content-center">
-                                <h4 style="font-weight: bold; color: #73141d" class="mt-auto mb-2">
-                                    Parceria BTG Pactual e<br>
-                                    Conselho Federal de Odontologia
+                                <h4 style="font-weight: bold; color: #FFF" class="mt-auto mb-2">
+                                O Conselho Federal de Odontologia
+                                <br>
+                                e o BTG Pactual se uniram
                                 </h4>
-                                <p style="font-size: 1.3rem; font-weight: 500;">O BTG e o CFO se uniram para trazer os melhores benefícios para você e para o seu negócio.</p>
+                                <p style="font-size: 1.3rem; font-weight: 500; color: #FFF">para trazer os melhores benefícios para você e para seu negócio.</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section class="section-padding" id="about">
+            <section class="section-padding" id="sobre">
                 <div class="container">
                     <div class="row">
 
-                        <div class="col-lg-7 col-md-7 col-12">
+                        <div class="col-lg-7 col-md-7 col-12" id="btg">
                             <h3 class="mb-lg-3 mb-3" style="font-weight: bold; color: #73141d">Bem-Vindo</h2>
 
                             <p style="font-size: 1.5rem; font-weight: 500;">Neste espaço, os inscritos em situação ativa no<br>
                                 Sistema Conselhos têm acesso a benefícios<br>
-                                exclusivos para Pessoa Física e Jurídica..</p>
+                                exclusivos para Pessoa Física e Jurídica.</p>
 
                         </div> 
 
@@ -160,7 +161,7 @@ include('webservice.php');
 
                         
                         <div id="div-footer" class="div-footer col-lg-7 col-md-7 col-12 mx-auto py-5">
-                            <h3 class="mb-lg-3 mb-3" style="font-weight: bold; color: #73141d">Conheça as vantagens da parceria <br> BTG+ e CFO para PF e PJ:</h2>
+                            <h3 class="mb-lg-3 mb-3 mt-3" style="font-weight: bold; color: #73141d">Conheça as vantagens BTG+ <br> para PF e PJ:</h2>
                     
                                 <br>
             
@@ -181,16 +182,15 @@ include('webservice.php');
             
                                 <p style="margin-top: 25px; font-size: 1.5rem; font-weight: 500;">Abra de forma online a sua conta PJ, sem custos.</p>
                                 <p style="margin-top: 25px; font-size: 1.5rem; font-weight: 500;">Transferências ilimitadas via PIX.*</p>
-                                <p style="margin-top: 25px; margin-bottom: 0px; font-size: 1.5rem; font-weight: 500;">Aprovação dos pagamentos de qualquer lugar.</p>
+                                <p style="margin-top: 25px; padding-bottom: 20px; font-size: 1.5rem; font-weight: 500;">Aprovação dos pagamentos de qualquer lugar.</p>
                                 
-                                <button class="btn btn-acess mt-5"><b>SAIBA MAIS</b></button>
                         </div>
 
                     </div>
                 </div>
             </section>
 
-            <section class="gallery">
+            <section class="disclaimer">
                 <div class="container">
                     <div class="row">
                         <div class="col-12">

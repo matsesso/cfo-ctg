@@ -71,8 +71,8 @@ if(count($_POST) > 0) {
       $stmt->store_result();
       
         if($stmt->num_rows == 1) {
-            echo "<script>alert('CPF ou CNPJ válido! Clique no OK para ser redirecionado.');</script>";
             header("refresh:1;url=index.php");
+            echo "<script>alert('CPF ou CNPJ válido! Clique no OK para ser redirecionado.');</script>";
         }else {
             echo "<script>alert('Esse CPF ou CNPJ não se encontra no banco de dados do CFO. Favor informar um cadastrado.');</script>";
         }
